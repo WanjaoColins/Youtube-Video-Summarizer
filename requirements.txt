@@ -7,3 +7,4 @@ requests
 twilio
 gunicorn
 youtube-transcript-api
+python-dotenv

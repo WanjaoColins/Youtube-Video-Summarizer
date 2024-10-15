@@ -1,22 +1,24 @@
 # import the necessary libraries
+import os
+from dotenv import load_dotenv
+load_dotenv()
 from flask import Flask, render_template, request, jsonify
 from langchain_community.document_loaders import YoutubeLoader
 from langchain_together import ChatTogether
 from langchain.prompts import PromptTemplate
 from langchain.schema.runnable import RunnableSequence
-import api_key
-import sid
+
 from twilio.rest import Client 
 
 app = Flask(__name__)
 
 # Initialize the Twilio client
-twilio_account_sid = sid.sid
-twilio_auth_token = sid.auth
+twilio_account_sid = os.environ.get('TWILIO_ACCOUNT_SID')
+twilio_auth_token = os.environ.get('TWILIO_AUTH_TOKEN')
 twilio_client = Client(twilio_account_sid, twilio_auth_token)
 
 # Initialize the language model
-llm = ChatTogether(api_key=api_key.api, temperature=0.0, 
+llm = ChatTogether(api_key=os.environ.get('TOGETHER_API_KEY'), temperature=0.0, 
                    model="meta-llama/Meta-Llama-3.1-8B-Instruct-Turbo")
 
 # Define the prompt template
