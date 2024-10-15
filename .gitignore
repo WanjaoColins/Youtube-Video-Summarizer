@@ -1,0 +1,26 @@
+# Ignore specific Python files containing sensitive information
+api_key.py
+sid.py
+
+# Ignore all .py files in a specific directory (if applicable)
+sensitive_data/*.py
+
+# Ignore specific patterns in all .py files
+**/api_key*.py
+**/*secret*.py
+**/*credential*.py
+
+# Ignore .env files if you're using environment variables
+.env
+
+# Python-specific ignores
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+pip-log.txt
+pip-delete-this-directory.txt
+
