@@ -7,11 +7,9 @@ from langchain_community.document_loaders import YoutubeLoader
 from langchain_together import ChatTogether
 from langchain.prompts import PromptTemplate
 from langchain.schema.runnable import RunnableSequence
-
 from twilio.rest import Client 
 
 app = Flask(__name__)
-""" 
 # Initialize the Twilio client
 twilio_account_sid = os.environ.get('TWILIO_ACCOUNT_SID')
 twilio_auth_token = os.environ.get('TWILIO_AUTH_TOKEN')
@@ -62,11 +60,5 @@ def index():
     
     return render_template('index.html')
 
-"""
-
-@app.route('/')
-def hello():
-     return "Hello World"
-    
 if __name__ == '__main__':
     app.run(debug=True)
