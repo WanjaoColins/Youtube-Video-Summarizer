@@ -11,7 +11,7 @@ from langchain.schema.runnable import RunnableSequence
 from twilio.rest import Client 
 
 app = Flask(__name__)
-
+""" 
 # Initialize the Twilio client
 twilio_account_sid = os.environ.get('TWILIO_ACCOUNT_SID')
 twilio_auth_token = os.environ.get('TWILIO_AUTH_TOKEN')
@@ -43,6 +43,7 @@ chain = RunnableSequence(
     product_description_template | llm
 )
 
+
 @app.route('/', methods=['GET', 'POST'])
 def index():
     if request.method == 'POST':
@@ -61,5 +62,11 @@ def index():
     
     return render_template('index.html')
 
+"""
+
+@app.route('/')
+def hello():
+     return "Hello World"
+    
 if __name__ == '__main__':
     app.run(debug=True)
