@@ -3,6 +3,7 @@ import os
 from dotenv import load_dotenv
 load_dotenv()
 from flask import Flask, render_template, request
+from urllib.parse import urlparse, parse_qs
 from youtube_transcript_api import YouTubeTranscriptApi
 from langchain_together import ChatTogether
 from langchain.prompts import PromptTemplate
@@ -36,12 +37,29 @@ product_description_template = PromptTemplate(
 # Create the chain
 chain = RunnableSequence(product_description_template | llm)
 
+# Function to extract video ID from URL
+def extract_video_id(url):
+    query = urlparse(url)
+    if query.hostname == 'youtu.be':
+        return query.path[1:]
+    if query.hostname in ('www.youtube.com', 'youtube.com'):
+        if query.path == '/watch':
+            return parse_qs(query.query)['v'][0]
+        if query.path[:7] == '/embed/':
+            return query.path.split('/')[2]
+        if query.path[:3] == '/v/':
+            return query.path.split('/')[2]
+    return None
+
 # Define the Flask route
 @app.route('/', methods=['GET', 'POST'])
 def index():
     if request.method == 'POST':
         video_url = request.form['video_url']
-        video_id = video_url.split('v=')[-1]
+        video_id = extract_video_id(video_url)
+        
+        if not video_id:
+            return render_template('error.html', error="Invalid YouTube URL.")
 
         try:
             # Fetch transcript using the unofficial API
@@ -54,10 +72,9 @@ def index():
             })
             return render_template('result.html', summary=summary.content)
         except Exception as e:
-            print(f"Error loading video: {str(e)}")  # Log the error
-            return render_template('error.html', error=f"There was an error processing your request: {str(e)}")  # Show the error
+            print(f"Error loading video: {str(e)}")
+            return render_template('error.html', error=f"There was an error processing your request: {str(e)}")
     return render_template('index.html')
-
 
 # Run the app
 if __name__ == '__main__':
