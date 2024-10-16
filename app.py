@@ -39,6 +39,7 @@ chain = RunnableSequence(product_description_template | llm)
 
 # Function to extract video ID from URL
 def extract_video_id(url):
+    print(f"Received URL: {url}")  # Debugging log
     query = urlparse(url)
     if query.hostname == 'youtu.be':
         return query.path[1:]
@@ -49,6 +50,7 @@ def extract_video_id(url):
             return query.path.split('/')[2]
         if query.path[:3] == '/v/':
             return query.path.split('/')[2]
+    print("Failed to extract video ID.")  # Debugging log
     return None
 
 # Define the Flask route
