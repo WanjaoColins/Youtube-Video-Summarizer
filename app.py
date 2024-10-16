@@ -42,28 +42,19 @@ def index():
     if request.method == 'POST':
         video_url = request.form['video_url']
 
-        # Check for environment variables
-        if not twilio_account_sid or not twilio_auth_token or not os.environ.get('TOGETHER_API_KEY'):
-            return render_template('error.html', error="Environment variables for Twilio or API Key are not set.")
+        # Load and process the YouTube video
+        loader = YoutubeLoader.from_youtube_url(video_url, add_video_info=False)
+        data = loader.load()
 
-        try:
-            # Load and process the YouTube video
-            loader = YoutubeLoader.from_youtube_url(video_url, add_video_info=False)
-            data = loader.load()
-            print(f"Loaded data length: {len(data)}")
-            print(f"Loaded data: {data}")
-
-            # Check if any data was loaded from the video
-            if len(data) > 0:
-                # Generate the summary using the loaded video transcript
-                summary = chain.invoke({
-                    "video_transcript": data[0].page_content
-                })
-                return render_template('result.html', summary=summary.content)
-            else:
-                return render_template('error.html', error="Unable to retrieve video transcript or the video may have no subtitles.")
-        except Exception as e:
-            return render_template('error.html', error=f"An error occurred: {str(e)}")
+        # Check if any data was loaded from the video
+        if len(data) > 0:
+            # Generate the summary using the loaded video transcript
+            summary = chain.invoke({
+                "video_transcript": data[0].page_content
+            })
+            return render_template('result.html', summary=summary.content)
+        else:
+            return render_template('error.html', error="Unable to retrieve video transcript.")
     return render_template('index.html')
 
 # Run the app
