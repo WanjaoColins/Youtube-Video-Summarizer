@@ -54,9 +54,10 @@ def index():
             })
             return render_template('result.html', summary=summary.content)
         except Exception as e:
-            print(f"Error loading video: {str(e)}")
-            return render_template('error.html', error="There was an error processing your request. Please try again later.")
+            print(f"Error loading video: {str(e)}")  # Log the error
+            return render_template('error.html', error=f"There was an error processing your request: {str(e)}")  # Show the error
     return render_template('index.html')
+
 
 # Run the app
 if __name__ == '__main__':
