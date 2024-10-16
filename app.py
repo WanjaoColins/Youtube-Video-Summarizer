@@ -57,7 +57,7 @@ def index():
     if request.method == 'POST':
         video_url = request.form['video_url']
         video_id = extract_video_id(video_url)
-        print(f"Extracted video ID: {video_id}")  # Debugging statement
+        print(f"Extracted video ID: {video_id}")
         
         if not video_id:
             return render_template('error.html', error="Invalid YouTube URL.")
@@ -66,6 +66,7 @@ def index():
             # Fetch transcript using the unofficial API
             transcript = YouTubeTranscriptApi.get_transcript(video_id)
             video_transcript = ' '.join([item['text'] for item in transcript])
+            print(f"Transcript fetched successfully: {video_transcript[:100]}...")  # Log first 100 chars
 
             # Generate the summary using the loaded video transcript
             summary = chain.invoke({
@@ -76,7 +77,6 @@ def index():
             print(f"Error loading video: {str(e)}")
             return render_template('error.html', error=f"There was an error processing your request: {str(e)}")
     return render_template('index.html')
-
 
 # Run the app
 if __name__ == '__main__':
