@@ -43,20 +43,25 @@ def index():
         video_url = request.form['video_url']
 
         # Load and process the YouTube video
-        loader = YoutubeLoader.from_youtube_url(video_url, add_video_info=False)
-        data = loader.load()
+        try:
+            loader = YoutubeLoader.from_youtube_url(video_url, add_video_info=False)
+            data = loader.load()
+            print(f"Loaded data length: {len(data)}")
+            print(f"Loaded data: {data}")
 
-        # Check if any data was loaded from the video
-        if len(data) > 0:
-            # Generate the summary using the loaded video transcript
-            summary = chain.invoke({
-                "video_transcript": data[0].page_content
-            })
-            return render_template('result.html', summary=summary.content)
-        else:
-            return render_template('error.html', error="Unable to retrieve video transcript.")
+            if len(data) > 0:
+                # Generate the summary using the loaded video transcript
+                summary = chain.invoke({
+                    "video_transcript": data[0].page_content
+                })
+                return render_template('result.html', summary=summary.content)
+            else:
+                return render_template('error.html', error="Unable to retrieve video transcript.")
+        except Exception as e:
+            print(f"Error loading video: {str(e)}")
+            return render_template('error.html', error="There was an error processing your request. Please try again later.")
     return render_template('index.html')
 
-# Run the app
 if __name__ == '__main__':
     app.run(debug=True)
+
