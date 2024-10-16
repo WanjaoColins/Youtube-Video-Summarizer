@@ -57,6 +57,7 @@ def index():
     if request.method == 'POST':
         video_url = request.form['video_url']
         video_id = extract_video_id(video_url)
+        print(f"Extracted video ID: {video_id}")  # Debugging statement
         
         if not video_id:
             return render_template('error.html', error="Invalid YouTube URL.")
@@ -75,6 +76,7 @@ def index():
             print(f"Error loading video: {str(e)}")
             return render_template('error.html', error=f"There was an error processing your request: {str(e)}")
     return render_template('index.html')
+
 
 # Run the app
 if __name__ == '__main__':
