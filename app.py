@@ -39,18 +39,19 @@ chain = RunnableSequence(product_description_template | llm)
 
 # Function to extract video ID from URL
 def extract_video_id(url):
-    print(f"Received URL: {url}")  # Debugging log
-    query = urlparse(url)
-    if query.hostname == 'youtu.be':
-        return query.path[1:]
-    if query.hostname in ('www.youtube.com', 'youtube.com'):
-        if query.path == '/watch':
-            return parse_qs(query.query)['v'][0]
-        if query.path[:7] == '/embed/':
-            return query.path.split('/')[2]
-        if query.path[:3] == '/v/':
-            return query.path.split('/')[2]
-    print("Failed to extract video ID.")  # Debugging log
+    parsed_url = urlparse(url)
+    
+    if parsed_url.hostname in ['youtu.be']:
+        return parsed_url.path[1:]
+    if parsed_url.hostname in ['www.youtube.com', 'youtube.com']:
+        if parsed_url.path == '/watch':
+            return parse_qs(parsed_url.query).get('v', [None])[0]
+        if parsed_url.path.startswith('/embed/'):
+            return parsed_url.path.split('/')[2]
+        if parsed_url.path.startswith('/v/'):
+            return parsed_url.path.split('/')[2]
+        if parsed_url.path.startswith('/live/'):
+            return parsed_url.path.split('/')[2]
     return None
 
 # Define the Flask route
@@ -59,6 +60,7 @@ def index():
     if request.method == 'POST':
         video_url = request.form['video_url']
         video_id = extract_video_id(video_url)
+        print(f"Received URL: {video_url}")
         print(f"Extracted video ID: {video_id}")
         
         if not video_id:
