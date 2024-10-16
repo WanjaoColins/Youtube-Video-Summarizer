@@ -3,7 +3,7 @@ import os
 from dotenv import load_dotenv
 load_dotenv()
 from flask import Flask, render_template, request
-from langchain_community.document_loaders import YoutubeLoader
+from youtube_transcript_api import YouTubeTranscriptApi
 from langchain_together import ChatTogether
 from langchain.prompts import PromptTemplate
 from langchain.schema.runnable import RunnableSequence
@@ -41,27 +41,23 @@ chain = RunnableSequence(product_description_template | llm)
 def index():
     if request.method == 'POST':
         video_url = request.form['video_url']
+        video_id = video_url.split('v=')[-1]
 
-        # Load and process the YouTube video
         try:
-            loader = YoutubeLoader.from_youtube_url(video_url, add_video_info=False)
-            data = loader.load()
-            print(f"Loaded data length: {len(data)}")
-            print(f"Loaded data: {data}")
+            # Fetch transcript using the unofficial API
+            transcript = YouTubeTranscriptApi.get_transcript(video_id)
+            video_transcript = ' '.join([item['text'] for item in transcript])
 
-            if len(data) > 0:
-                # Generate the summary using the loaded video transcript
-                summary = chain.invoke({
-                    "video_transcript": data[0].page_content
-                })
-                return render_template('result.html', summary=summary.content)
-            else:
-                return render_template('error.html', error="Unable to retrieve video transcript.")
+            # Generate the summary using the loaded video transcript
+            summary = chain.invoke({
+                "video_transcript": video_transcript
+            })
+            return render_template('result.html', summary=summary.content)
         except Exception as e:
             print(f"Error loading video: {str(e)}")
             return render_template('error.html', error="There was an error processing your request. Please try again later.")
     return render_template('index.html')
 
+# Run the app
 if __name__ == '__main__':
     app.run(debug=True)
-
