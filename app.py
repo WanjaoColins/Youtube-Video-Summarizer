@@ -18,7 +18,11 @@ llm = ChatTogether(api_key=os.environ.get('TOGETHER_API_KEY'), temperature=0.0,
                    model="meta-llama/Meta-Llama-3.1-8B-Instruct-Turbo")
 
 # Initialize YouTube API client
-youtube = build('youtube', 'v3', developerKey=os.environ.get('YOUTUBE_API_KEY'))
+YOUTUBE_API_KEY = os.environ.get('YOUTUBE_API_KEY')
+if not YOUTUBE_API_KEY:
+    print("Error: YouTube API key is not set.")
+else:
+    youtube = build('youtube', 'v3', developerKey=YOUTUBE_API_KEY)
 
 # Define the prompt template
 SUMMARY_TEMPLATE = """Provide a concise summary of the video's main topic and purpose based on the following information:
@@ -63,6 +67,7 @@ def fetch_video_info(video_id):
                 'description': snippet['description']
             }
         else:
+            print(f"No items found for video ID: {video_id}")
             return None
     except Exception as e:
         print(f"Error fetching video info: {str(e)}")
