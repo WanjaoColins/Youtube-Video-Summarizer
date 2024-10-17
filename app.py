@@ -8,12 +8,12 @@ def test_youtube_connection():
     try:
         # Test a simple GET request to YouTube
         response = requests.get('https://www.youtube.com')
-        if response.status_code == 200:
-            return jsonify({"message": "Connection to YouTube is successful!"}), 200
-        else:
-            return jsonify({"message": f"Failed to connect to YouTube, status code: {response.status_code}"}), 500
+        response.raise_for_status()  # Raise an error for 4XX/5XX responses
+        return jsonify({"message": "Connection to YouTube is successful!"}), 200
+    except requests.exceptions.RequestException as e:
+        return jsonify({"message": f"Request error: {str(e)}"}), 500
     except Exception as e:
-        return jsonify({"message": f"Error: {e}"}), 500
+        return jsonify({"message": f"Unexpected error: {str(e)}"}), 500
 
 if __name__ == "__main__":
     app.run(debug=True)
