@@ -1,25 +1,3 @@
-import requests
-from flask import Flask, request, jsonify
-
-app = Flask(__name__)
-
-@app.route('/test_youtube', methods=['GET'])
-def test_youtube_connection():
-    try:
-        # Test a simple GET request to YouTube
-        response = requests.get('https://www.youtube.com')
-        response.raise_for_status()  # Raise an error for 4XX/5XX responses
-        return jsonify({"message": "Connection to YouTube is successful!"}), 200
-    except requests.exceptions.RequestException as e:
-        return jsonify({"message": f"Request error: {str(e)}"}), 500
-    except Exception as e:
-        return jsonify({"message": f"Unexpected error: {str(e)}"}), 500
-
-if __name__ == "__main__":
-    app.run(debug=True)
-
-
-"""
 import os
 from flask import Flask, request, jsonify, render_template
 from urllib.parse import urlparse, parse_qs
@@ -39,8 +17,7 @@ app = Flask(__name__)
 twilio_client = Client(os.environ.get('TWILIO_ACCOUNT_SID'), os.environ.get('TWILIO_AUTH_TOKEN'))
 llm = ChatTogether(api_key=os.environ.get('TOGETHER_API_KEY'), temperature=0.0,
                    model="meta-llama/Meta-Llama-3.1-8B-Instruct-Turbo")
-"""
-"""
+
 # Define the prompt template
 SUMMARY_TEMPLATE = """Read through the entire transcript carefully. Provide a concise summary of the video's main topic and purpose.
 Extract and list the five most important points from the transcript.
@@ -51,9 +28,6 @@ For each point: State the key idea in a clear and concise manner.
 prioritize including these in your summary or key points.
 Video transcript: {video_transcript}"""
 
-"""
-
-"""
 product_description_template = PromptTemplate(
     input_variables=["video_transcript"],
     template=SUMMARY_TEMPLATE
@@ -129,5 +103,3 @@ def whatsapp_webhook():
 
 if __name__ == '__main__':
     app.run(debug=True)
-
-"""
