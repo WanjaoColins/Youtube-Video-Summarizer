@@ -9,7 +9,8 @@ from twilio.rest import Client
 from twilio.twiml.messaging_response import MessagingResponse
 from dotenv import load_dotenv
 
-load_dotenv()  # This loads the variables from .env file
+# Load environment variables from the .env file
+load_dotenv()
 
 app = Flask(__name__)
 
@@ -63,9 +64,14 @@ def generate_summary(video_url):
     if not video_id:
         return "Invalid YouTube URL."
     try:
+        transcript = fetch_transcript(video_id)  # Fetch the transcript
+        if transcript is None:
+            return "Could not fetch the transcript."
+        
         summary = chain.invoke({"video_transcript": transcript})
         return summary.content
     except Exception as e:
+        print(f"Error processing video: {str(e)}")  # Log error for debugging
         return f"Error processing video: {str(e)}"
 
 @app.route('/', methods=['GET', 'POST'])
