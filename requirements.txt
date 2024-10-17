@@ -8,3 +8,4 @@ langchain-together==0.2.0
 twilio==9.3.3
 python-dotenv==0.21.0
 requests==2.31.0
+youtube-transcript-api==0.6.2
