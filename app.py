@@ -19,16 +19,14 @@ llm = ChatTogether(api_key=os.environ.get('TOGETHER_API_KEY'), temperature=0.0,
                    model="meta-llama/Meta-Llama-3.1-8B-Instruct-Turbo")
 
 # Define the prompt template
-SUMMARY_TEMPLATE = """
-Read through the entire transcript carefully. Provide a concise summary of the video's main topic and purpose.
+SUMMARY_TEMPLATE = """Read through the entire transcript carefully. Provide a concise summary of the video's main topic and purpose.
 Extract and list the five most important points from the transcript.
 For each point: State the key idea in a clear and concise manner.
 - Ensure your summary and key points capture the essence of the video without including unnecessary details.
 - Use clear, engaging language that is accessible to a general audience.
 - If the transcript includes any statistical data, expert opinions, or unique insights,
 prioritize including these in your summary or key points.
-Video transcript: {video_transcript}
-"""
+Video transcript: {video_transcript}"""
 
 product_description_template = PromptTemplate(
     input_variables=["video_transcript"],
@@ -57,13 +55,13 @@ def generate_summary(video_url):
     video_id = extract_video_id(video_url)
     if not video_id:
         return "Invalid YouTube URL."
-
     try:
         transcript = fetch_transcript(video_id)
         video_transcript = ' '.join([item['text'] for item in transcript])
         summary = chain.invoke({"video_transcript": video_transcript})
         return summary.content
     except Exception as e:
+        print(f"Error processing video: {str(e)}")
         return f"Error processing video: {str(e)}"
 
 @app.route('/', methods=['GET', 'POST'])
@@ -79,10 +77,8 @@ def send_message():
     data = request.json
     to_number = data.get('to_number')
     message = data.get('message')
-
     if not to_number or not message:
         return jsonify({"status": "error", "message": "Missing 'to_number' or 'message'"}), 400
-
     try:
         message = twilio_client.messages.create(
             body=message,
@@ -98,13 +94,11 @@ def whatsapp_webhook():
     incoming_msg = request.values.get('Body', '').lower()
     resp = MessagingResponse()
     msg = resp.message()
-
     if incoming_msg.startswith(('https://www.youtube.com/', 'https://youtu.be/')):
         summary = generate_summary(incoming_msg)
         msg.body(summary)
     else:
         msg.body("Please send a valid YouTube URL.")
-
     return str(resp)
 
 if __name__ == '__main__':
