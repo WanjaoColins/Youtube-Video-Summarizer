@@ -67,16 +67,16 @@ ngrok http 5000
 This will generate a public-facing URL you can use to test the web app from anywhere.
 
 ## Key Components
-app.py: The main Flask application responsible for handling requests and rendering pages.
-youtube_transcript_api: Python library that handles fetching transcripts from YouTube videos
-templates/: Contains the HTML files for the web interface.
-.env: Stores API keys and other sensitive configuration values.
+- app.py: The main Flask application responsible for handling requests and rendering pages.
+- youtube_transcript_api: Python library that handles fetching transcripts from YouTube videos
+- templates/: Contains the HTML files for the web interface.
+- .env: Stores API keys and other sensitive configuration values.
 
 ## Future Enhancements
-Add support for multi-language transcripts.
-Improve error handling and edge case management.
-Integrate more advanced NLP models for even more accurate summaries.
-Enhance the UI with additional video information, like metadata and thumbnails.
+- Add support for multi-language transcripts.
+- Improve error handling and edge case management.
+- Integrate more advanced NLP models for even more accurate summaries.
+- Enhance the UI with additional video information, like metadata and thumbnails.
 
 ## License
 This project is licensed under the MIT License. Feel free to contribute or modify the project to fit your needs.
