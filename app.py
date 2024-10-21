@@ -5,17 +5,15 @@ from youtube_transcript_api import YouTubeTranscriptApi
 from langchain_together import ChatTogether
 from langchain.prompts import PromptTemplate
 from langchain.schema.runnable import RunnableSequence
-from twilio.rest import Client
-from twilio.twiml.messaging_response import MessagingResponse
 from dotenv import load_dotenv
+import requests
 
 # Load environment variables from the .env file
 load_dotenv()
 
 app = Flask(__name__)
 
-# Initialize clients and models
-twilio_client = Client(os.environ.get('TWILIO_ACCOUNT_SID'), os.environ.get('TWILIO_AUTH_TOKEN'))
+# Initialize LLM model
 llm = ChatTogether(api_key=os.environ.get('TOGETHER_API_KEY'), temperature=0.0,
                    model="meta-llama/Meta-Llama-3.1-8B-Instruct-Turbo")
 
@@ -38,6 +36,10 @@ product_description_template = PromptTemplate(
 
 # Create the chain
 chain = RunnableSequence(product_description_template | llm)
+
+# Telegram Bot API token
+TELEGRAM_BOT_TOKEN = os.environ.get('TELEGRAM_BOT_TOKEN')
+TELEGRAM_API_URL = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}"
 
 def extract_video_id(url):
     parsed_url = urlparse(url)
@@ -69,10 +71,21 @@ def generate_summary(video_url):
             return "Could not fetch the transcript."
         
         summary = chain.invoke({"video_transcript": transcript})
-        return summary.content
+        # Ensure no extra "Summary" heading is included
+        return summary.content.replace("Summary:", "").strip()
     except Exception as e:
         print(f"Error processing video: {str(e)}")  # Log error for debugging
         return f"Error processing video: {str(e)}"
+
+def send_telegram_message(chat_id, text):
+    """Send a message to the user via Telegram."""
+    url = f"{TELEGRAM_API_URL}/sendMessage"
+    payload = {
+        'chat_id': chat_id,
+        'text': text
+    }
+    response = requests.post(url, json=payload)
+    return response
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
@@ -82,39 +95,22 @@ def index():
         return render_template('result.html', summary=summary)
     return render_template('index.html')
 
-@app.route('/send-message', methods=['POST'])
-def send_message():
-    data = request.json
-    to_number = data.get('to_number')
-    message = data.get('message')
+@app.route('/telegram-webhook', methods=['POST'])
+def telegram_webhook():
+    """Handle incoming Telegram messages."""
+    data = request.get_json()
 
-    if not to_number or not message:
-        return jsonify({"status": "error", "message": "Missing 'to_number' or 'message'"}), 400
+    if 'message' in data:
+        chat_id = data['message']['chat']['id']
+        text = data['message'].get('text', '').strip().lower()
 
-    try:
-        message = twilio_client.messages.create(
-            body=message,
-            from_='whatsapp:+14155238886',
-            to=f'whatsapp:{to_number}'
-        )
-        return jsonify({"status": "success", "sid": message.sid}), 200
-    except Exception as e:
-        return jsonify({"status": "error", "message": str(e)}), 500
+        if text.startswith(('https://www.youtube.com/', 'https://youtu.be/')):
+            summary = generate_summary(text)
+            send_telegram_message(chat_id, summary)
+        else:
+            send_telegram_message(chat_id, "Please send a valid YouTube URL.")
 
-@app.route('/whatsapp', methods=['POST'])
-def whatsapp_webhook():
-    incoming_msg = request.values.get('Body', '').lower()
-    resp = MessagingResponse()
-    msg = resp.message()
-
-    if incoming_msg.startswith(('https://www.youtube.com/', 'https://youtu.be/')):
-        summary = generate_summary(incoming_msg)
-        msg.body(summary)
-    else:
-        msg.body("Please send a valid YouTube URL.")
-
-    return str(resp)
+    return '', 200
 
 if __name__ == '__main__':
     app.run(debug=True)
-

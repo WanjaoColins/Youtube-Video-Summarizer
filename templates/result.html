@@ -12,43 +12,78 @@
             max-width: 800px;
             margin: 0 auto;
             padding: 20px;
+            background-color: #f9f9f9;
         }
         h1 {
-            color: #000;
+            color: #ff0000;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #ff0000;
         }
         .summary {
-            background-color: #f4f4f4;
+            background-color: #ffffff;
             border-left: 4px solid #ff0000;
-            padding: 15px;
+            padding: 20px;
+            margin-top: 0;
             margin-bottom: 20px;
             white-space: pre-wrap;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
         .back-link {
             display: inline-block;
             margin-top: 20px;
-            color: #ff0000;
+            padding: 12px 24px;
+            background-color: #ff0000;
+            color: #fff;
             text-decoration: none;
+            font-weight: bold;
+            border-radius: 5px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.3s ease, box-shadow 0.3s ease;
         }
         .back-link:hover {
-            text-decoration: underline;
+            background-color: #cc0000;
+            box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+        }
+        ol {
+            margin-top: 10px;
+            padding-left: 20px;
+        }
+        li {
+            margin-bottom: 10px;
+        }
+        strong {
+            color: #ff0000;
         }
     </style>
 </head>
 <body>
     <h1>Video Summary</h1>
     <div id="summary" class="summary">
-{{ summary | safe }}
+        {{ summary | trim | safe }}
     </div>
     <a href="/" class="back-link">Back to Home</a>
 
     <script>
-        function convertMarkdownToBold() {
+        function processContent() {
             var summaryElement = document.getElementById('summary');
             var content = summaryElement.innerHTML;
+
+            // Convert markdown bold to HTML bold
             content = content.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+            
+            // Remove any leading or trailing whitespace
+            content = content.trim();
+            
+            // Remove any extra line breaks at the beginning and end
+            content = content.replace(/^[\r\n]+|[\r\n]+$/g, '');
+            
+            // Ensure there's no extra space before the first list item
+            content = content.replace(/^\s*<ol>/, '<ol>');
+
             summaryElement.innerHTML = content;
         }
-        window.onload = convertMarkdownToBold;
+        window.onload = processContent;
     </script>
 </body>
 </html>

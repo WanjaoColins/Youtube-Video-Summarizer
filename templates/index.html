@@ -6,61 +6,162 @@
     <title>YouTube Video Summarizer</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
-            background-color: #f0f0f0;
+            font-family: 'Arial', sans-serif;
+            background-color: #000000; /* Black background */
             margin: 0;
             padding: 0;
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
+            overflow: hidden;
+            position: relative;
         }
         .container {
-            background-color: #ffffff;
+            z-index: 10;
+            background-color: rgba(0, 0, 0, 0.7);
             padding: 2rem;
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            text-align: center;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(255, 0, 0, 0.3);
         }
         h1 {
-            color: #000000;
-            margin-bottom: 1.5rem;
+            color: #ff0000; /* YouTube Red */
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            text-align: center;
+        }
+        h1 span {
+            color: #ffffff; /* White for Video Summarizer */
         }
         form {
             display: flex;
             flex-direction: column;
-            align-items: center;
+            align-items: stretch;
         }
         input[type="text"] {
             width: 100%;
-            padding: 0.5rem;
+            padding: 0.8rem;
             margin-bottom: 1rem;
-            border: 1px solid #ccc;
+            border: 2px solid #ff0000; /* YouTube Red */
             border-radius: 4px;
             font-size: 1rem;
+            transition: border-color 0.3s ease;
+            background-color: #1a1a1a;
+            color: #ffffff;
+        }
+        input[type="text"]:focus {
+            border-color: #cc0000; /* Darker shade of red */
+            outline: none;
         }
         input[type="submit"] {
-            background-color: #ff0000;
+            background-color: #ff0000; /* YouTube Red */
             color: #ffffff;
             border: none;
-            padding: 0.5rem 1rem;
+            padding: 0.8rem;
             font-size: 1rem;
             cursor: pointer;
             border-radius: 4px;
-            transition: background-color 0.3s ease;
+            transition: background-color 0.3s ease, transform 0.2s ease;
         }
         input[type="submit"]:hover {
-            background-color: #cc0000;
+            background-color: #cc0000; /* Darker shade of red */
+            transform: translateY(-2px);
+        }
+        /* Background animation */
+        .bubble {
+            position: absolute;
+            bottom: -50px;
+            width: 40px;
+            height: 40px;
+            background-color: rgba(255, 99, 71, 0.5); /* Light tomato red */
+            border-radius: 50%;
+            animation: rise 15s infinite ease-in;
+        }
+        .bubble:nth-child(2) { width: 60px; height: 60px; left: 10%; animation-duration: 18s;}
+        .bubble:nth-child(3) { width: 80px; height: 80px; left: 20%; animation-duration: 20s;}
+        .bubble:nth-child(4) { width: 50px; height: 50px; left: 30%; animation-duration: 16s;}
+        .bubble:nth-child(5) { width: 70px; height: 70px; left: 40%; animation-duration: 19s;}
+        .bubble:nth-child(6) { width: 90px; height: 90px; left: 50%; animation-duration: 21s;}
+        .bubble:nth-child(7) { width: 60px; height: 60px; left: 60%; animation-duration: 17s;}
+        .bubble:nth-child(8) { width: 80px; height: 80px; left: 70%; animation-duration: 22s;}
+        .bubble:nth-child(9) { width: 50px; height: 50px; left: 80%; animation-duration: 16s;}
+        .bubble:nth-child(10) { width: 70px; height: 70px; left: 90%; animation-duration: 19s;}
+
+        @keyframes rise {
+            0% {bottom: -50px; opacity: 0;}
+            20% {opacity: 0.8;}
+            80% {opacity: 0.8;}
+            100% {bottom: 100vh; opacity: 0;}
+        }
+
+        /* Spinner styles */
+        .spinner-container {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(229, 236, 233, 0.7);
+            z-index: 1000;
+        }
+        .spinner {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 50px;
+            height: 50px;
+            border: 5px solid #111111; /* YouTube Red */
+            border-top: 5px solid #ffffff; /* White */
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: translate(-50%, -50%) rotate(0deg); }
+            100% { transform: translate(-50%, -50%) rotate(360deg); }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>YouTube Video Summarizer</h1>
-        <form method="POST">
-            <input type="text" name="video_url" placeholder="Enter YouTube URL" required>
-            <input type="submit" value="Summarize">
-        </form>
+        <h1>YouTube <span>Video Summarizer</span></h1>
+        <form id="summarizerForm" method="POST">
+           <input type="text" name="video_url" placeholder="Enter YouTube URL" required>
+           <input type="submit" value="Summarize">
+       </form>
     </div>
+
+    <!-- Spinner -->
+    <div id="spinnerContainer" class="spinner-container">
+        <div class="spinner"></div>
+    </div>
+
+    <!-- Background bubbles -->
+    <div class="bubble"></div>
+    <div class="bubble"></div>
+    <div class="bubble"></div>
+    <div class="bubble"></div>
+    <div class="bubble"></div>
+    <div class="bubble"></div>
+    <div class="bubble"></div>
+    <div class="bubble"></div>
+    <div class="bubble"></div>
+    <div class="bubble"></div>
+
+    <script>
+        document.getElementById('summarizerForm').addEventListener('submit', function(e) {
+            e.preventDefault(); // Prevent the form from submitting normally
+            
+            // Show the spinner
+            document.getElementById('spinnerContainer').style.display = 'block';
+            
+            // Submit the form
+            this.submit();
+        });
+    </script>
 </body>
 </html>
