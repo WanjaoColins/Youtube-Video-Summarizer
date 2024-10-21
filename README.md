@@ -37,10 +37,12 @@ Ensure you have the following installed:
 ```bash
 git clone https://github.com/WanjaoColins/youtube-video-summarizer.git
 cd youtube-video-summarizer
+```
 
 ### 2. Install Required Packages
 ```bash
 pip install -r requirements.txt
+```
 
 ### 3. Environment Variables
 Create a .env file in the project root to store your API keys. Add the following:
@@ -51,6 +53,7 @@ RAPIDAPI_KEY=your_rapidapi_key
 ### 4. Run Flask Locally
 ```bash
 python app.py
+```
 
 The app will be hosted at http://localhost:5000.
 
@@ -59,6 +62,7 @@ To expose your local Flask app to the web for testing, use Ngrok. First, install
 
 ```bash
 ngrok http 5000
+```
 
 This will generate a public-facing URL you can use to test the web app from anywhere.
 
