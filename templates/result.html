@@ -12,22 +12,17 @@
             max-width: 800px;
             margin: 0 auto;
             padding: 20px;
-            background-color: #f9f9f9;
         }
         h1 {
-            color: #ff0000;
-            margin-bottom: 20px;
-            padding-bottom: 10px;
-            border-bottom: 2px solid #ff0000;
+            color: #000;
+            margin-bottom: 10px; /* Reduced space below the title */
         }
         .summary {
-            background-color: #ffffff;
+            background-color: #f4f4f4;
             border-left: 4px solid #ff0000;
-            padding: 20px;
-            margin-top: 0;
+            padding: 15px;
             margin-bottom: 20px;
             white-space: pre-wrap;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
         .back-link {
             display: inline-block;
@@ -46,44 +41,30 @@
             box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
         }
         ol {
-            margin-top: 10px;
-            padding-left: 20px;
+            margin-top: 10px; /* Add some space above the list */
         }
         li {
-            margin-bottom: 10px;
-        }
-        strong {
-            color: #ff0000;
+            margin-bottom: 10px; /* Space between list items */
         }
     </style>
 </head>
 <body>
     <h1>Video Summary</h1>
     <div id="summary" class="summary">
-        {{ summary | trim | safe }}
+        {{ summary | safe }}
     </div>
     <a href="/" class="back-link">Back to Home</a>
 
     <script>
-        function processContent() {
+        function convertMarkdownToBold() {
             var summaryElement = document.getElementById('summary');
             var content = summaryElement.innerHTML;
 
             // Convert markdown bold to HTML bold
             content = content.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-            
-            // Remove any leading or trailing whitespace
-            content = content.trim();
-            
-            // Remove any extra line breaks at the beginning and end
-            content = content.replace(/^[\r\n]+|[\r\n]+$/g, '');
-            
-            // Ensure there's no extra space before the first list item
-            content = content.replace(/^\s*<ol>/, '<ol>');
-
             summaryElement.innerHTML = content;
         }
-        window.onload = processContent;
+        window.onload = convertMarkdownToBold;
     </script>
 </body>
 </html>

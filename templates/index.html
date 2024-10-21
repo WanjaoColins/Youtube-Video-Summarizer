@@ -17,16 +17,9 @@
             overflow: hidden;
             position: relative;
         }
-        .container {
-            z-index: 10;
-            background-color: rgba(0, 0, 0, 0.7);
-            padding: 2rem;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(255, 0, 0, 0.3);
-        }
         h1 {
             color: #ff0000; /* YouTube Red */
-            margin-bottom: 1rem;
+            margin-bottom: 0; /* Removed padding */
             font-size: 1.5rem; /* Reduced font size */
             text-transform: uppercase;
             letter-spacing: 1px;
@@ -40,15 +33,13 @@
             align-items: stretch;
         }
         input[type="text"] {
-            width: 100%;
+            width: 93.3%;
             padding: 0.8rem;
             margin-bottom: 1rem;
             border: 2px solid #ff0000; /* YouTube Red */
             border-radius: 4px;
             font-size: 1rem;
             transition: border-color 0.3s ease;
-            background-color: #1a1a1a; /* Dark background for input */
-            color: #ffffff; /* White text for input */
         }
         input[type="text"]:focus {
             border-color: #cc0000; /* Darker shade of red */
@@ -78,70 +69,46 @@
             border-radius: 50%;
             animation: rise 15s infinite ease-in;
         }
-        .bubble:nth-child(2) { width: 60px; height: 60px; left: 10%; animation-duration :18s;}
-        .bubble:nth-child(3) { width :80px;height :80px ;left :20%;animation-duration :20s;}
-        .bubble:nth-child(4) { width :50px;height :50px ;left :30%;animation-duration :16s;}
-        .bubble:nth-child(5) { width :70px;height :70px ;left :40%;animation-duration :19s;}
-        .bubble:nth-child(6) { width :90px;height :90px ;left :50%;animation-duration :21s;}
-        .bubble:nth-child(7) { width :60px;height :60px ;left :60%;animation-duration :17s;}
-        .bubble:nth-child(8) { width :80px;height :80px ;left :70%;animation-duration :22s;}
-        .bubble:nth-child(9) { width :50px;height :50px ;left :80%;animation-duration :16s;}
-        .bubble:nth-child(10) { width :70px;height :70px ;left :90%;animation-duration :19s;}
+        .bubble:nth-child(2) { width: 60px; height: 60px; left: 10%; animation-duration: 18s;}
+        .bubble:nth-child(3) { width: 80px; height: 80px; left: 20%; animation-duration: 20s;}
+        .bubble:nth-child(4) { width: 50px; height: 50px; left: 30%; animation-duration: 16s;}
+        .bubble:nth-child(5) { width: 70px; height: 70px; left: 40%; animation-duration: 19s;}
+        .bubble:nth-child(6) { width: 90px; height: 90px; left: 50%; animation-duration: 21s;}
+        .bubble:nth-child(7) { width: 60px; height: 60px; left: 60%; animation-duration: 17s;}
+        .bubble:nth-child(8) { width: 80px; height: 80px; left: 70%; animation-duration: 22s;}
+        .bubble:nth-child(9) { width: 50px; height: 50px; left: 80%; animation-duration: 16s;}
+        .bubble:nth-child(10) { width: 70px; height: 70px; left: 90%; animation-duration: 19s;}
 
         @keyframes rise {
-            0% {bottom:-50px; opacity:0;}
-            20% {opacity:.8;}
-            80% {opacity:.8;}
-            100% {bottom:100vh; opacity:0;} /* Fixed syntax error here */
+            0% {bottom: -50px; opacity: 0;}
+            20% {opacity: 0.8;}
+            80% {opacity: 0.8;}
+            100% {bottom: 100vh; opacity: 0;}
         }
-
-        #done-message {
-          display:none; 
-          color:#00ff00; /* Green color */
-          font-size:2rem; 
-          font-weight:bold; 
-          text-align:center; 
-          margin-top:.5rem; 
-      }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>YouTube <span>Video Summarizer</span></h1>
-        <form id="summarizerForm" method="POST">
+        <form method="POST">
            <input type="text" name="video_url" placeholder="Enter YouTube URL" required>
            <input type="submit" value="Summarize">
-           <div id="done-message">Done!</div> <!-- Positioned below the submit button -->
        </form>
-    </div>
+   </div>
 
-    <!-- Background bubbles -->
-    <div class="bubble"></div>
-    <div class="bubble"></div>
-    <div class="bubble"></div>
-    <div class="bubble"></div>
-    <div class="bubble"></div>
-    <div class="bubble"></div>
-    <div class="bubble"></div>
-    <div class="bubble"></div>
-    <div class="bubble"></div>
-    <div class="bubble"></div>
+   <!-- Background bubbles -->
+   <div class="bubble"></div>
+   <div class="bubble"></div>
+   <div class="bubble"></div>
+   <div class="bubble"></div>
+   <div class="bubble"></div>
+   <div class="bubble"></div>
+   <div class="bubble"></div>
+   <div class="bubble"></div>
+   <div class="bubble"></div>
+   <div class="bubble"></div>
+   <div class="bubble"></div>
+   <div class="bubble"></div>
 
-    <script>
-      document.getElementById('summarizerForm').addEventListener('submit', function(e) {
-          e.preventDefault();
-          
-          // Hide the form
-          this.style.display = 'none';
-          
-          // Show the "Done!" message
-          document.getElementById('done-message').style.display = 'block';
-          
-          // Submit the form after a short delay
-          setTimeout(() => {
-              this.submit();
-          }, 5000); // Wait for 5 seconds before submitting
-      });
-    </script>
 </body>
 </html>
