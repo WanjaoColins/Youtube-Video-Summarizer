@@ -1,3 +1,5 @@
+![alt text](header-image.jpeg)
+
 # YouTube Video Summarizer
 
 ## Goal
