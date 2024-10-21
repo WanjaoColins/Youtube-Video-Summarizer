@@ -47,8 +47,8 @@ pip install -r requirements.txt
 ### 3. Environment Variables
 Create a .env file in the project root to store your API keys. Add the following:
 
-TOGETHER_API_KEY=your_together_api_key
-RAPIDAPI_KEY=your_rapidapi_key
+- TOGETHER_API_KEY=your_together_api_key
+- RAPIDAPI_KEY=your_rapidapi_key
 
 ### 4. Run Flask Locally
 ```bash
@@ -68,7 +68,7 @@ This will generate a public-facing URL you can use to test the web app from anyw
 
 ## Key Components
 app.py: The main Flask application responsible for handling requests and rendering pages.
-youtube_api.py: Handles fetching the transcript from the YouTube API.
+youtube_transcript_api: Python library that handles fetching transcripts from YouTube videos
 templates/: Contains the HTML files for the web interface.
 .env: Stores API keys and other sensitive configuration values.
 
